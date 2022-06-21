@@ -43,7 +43,16 @@ const getIdSelector = dependencies => {
     : getCombinedIdSelector(uniqIdSelectors)
 }
 
-const getComputeFn = (dependencies_, computeFn, equalityFn, getCache, stateDependency, arraySelector, propName, name) => {
+const getComputeFn = (
+  dependencies_,
+  computeFn,
+  equalityFn,
+  getCache,
+  stateDependency,
+  arraySelector,
+  propName,
+  name
+) => {
   const dependencies = dependencies_.length > 0 ? dependencies_ : ofIdentity
   let nComputations = 0
 
@@ -58,24 +67,31 @@ const getComputeFn = (dependencies_, computeFn, equalityFn, getCache, stateDepen
         return prevRes
       }
 
-      return prevRes.map((prop) => {
-        console.log(`%c call array selector with ${propName}: ${prop}`, 'color: green;');
-        return arraySelector(stateDependency(...args), {[propName]: prop});
+      return prevRes.map(prop => {
+        console.log(
+          `%c call array selector with ${propName}: ${prop}`,
+          'color: green;'
+        )
+        return arraySelector(stateDependency(...args), { [propName]: prop })
       })
     }
     nComputations++
     console.log(`%c selector: ${name}`, nComputations, computedArgs)
     const res = computeFn(...computedArgs)
     cache[0] = computedArgs
-    const newRes =  (cache[1] = equalityFn && equalityFn(res, prevRes) ? prevRes : res)
+    const newRes = (cache[1] =
+      equalityFn && equalityFn(res, prevRes) ? prevRes : res)
 
     if (!arraySelector || !stateDependency || !propName) {
-      return newRes;
+      return newRes
     }
 
-    return newRes.map((prop) => {
-      console.log(`%c call array selector with ${propName}: ${prop}`, 'color: green;');
-      return arraySelector(stateDependency(...args), {[propName]: prop});
+    return newRes.map(prop => {
+      console.log(
+        `%c call array selector with ${propName}: ${prop}`,
+        'color: green;'
+      )
+      return arraySelector(stateDependency(...args), { [propName]: prop })
     })
   }
 
@@ -168,16 +184,44 @@ export const createSelector = (dependencies, computeFn, equalityFn, name) => {
   }
   const idSelector = getIdSelector(dependencies)
   if (idSelector) {
-    return getInstanceSelector(dependencies, computeFn, equalityFn, idSelector, undefined, undefined, undefined, name)
+    return getInstanceSelector(
+      dependencies,
+      computeFn,
+      equalityFn,
+      idSelector,
+      undefined,
+      undefined,
+      undefined,
+      name
+    )
   }
   const cache = new Array(2)
-  return getComputeFn(dependencies, computeFn, equalityFn, () => cache, undefined, undefined, undefined, name)
+  return getComputeFn(
+    dependencies,
+    computeFn,
+    equalityFn,
+    () => cache,
+    undefined,
+    undefined,
+    undefined,
+    name
+  )
 }
 
-export const createArraySelector = (stateDependency, dependencies, computeFn, arraySelector, propName, equalityFn, name) => {
+export const createArraySelector = (
+  stateDependency,
+  dependencies,
+  computeFn,
+  arraySelector,
+  propName,
+  equalityFn,
+  name
+) => {
   if (
     process.env.NODE_ENV !== 'production' &&
-    !dependencies.concat(computeFn, stateDependency, arraySelector).every(dep => typeof dep === 'function')
+    !dependencies
+      .concat(computeFn, stateDependency, arraySelector)
+      .every(dep => typeof dep === 'function')
   ) {
     const dependencyTypes = dependencies.map(dep => typeof dep).join(', ')
     const computeFnType = typeof computeFn
@@ -185,15 +229,33 @@ export const createArraySelector = (stateDependency, dependencies, computeFn, ar
     const arraySelectorFnType = typeof arraySelector
     throw new Error(
       'Selector creators expect all input-selectors to be functions, ' +
-      `instead received the following types:\n - dependencies: [${dependencyTypes}]\n` +
-      `computeFn: ${computeFnType}\n stateDependencyFn: ${stateDependencyFnType}\n arraySelectorFn: ${arraySelectorFnType}`
+        `instead received the following types:\n - dependencies: [${dependencyTypes}]\n` +
+        `computeFn: ${computeFnType}\n stateDependencyFn: ${stateDependencyFnType}\n arraySelectorFn: ${arraySelectorFnType}`
     )
   }
 
   const idSelector = getIdSelector(dependencies)
   if (idSelector) {
-    return getInstanceSelector(dependencies, computeFn, equalityFn, idSelector, stateDependency, arraySelector, propName, name)
+    return getInstanceSelector(
+      dependencies,
+      computeFn,
+      equalityFn,
+      idSelector,
+      stateDependency,
+      arraySelector,
+      propName,
+      name
+    )
   }
   const cache = new Array(2)
-  return getComputeFn(dependencies, computeFn, equalityFn, () => cache, stateDependency, arraySelector, propName, name)
+  return getComputeFn(
+    dependencies,
+    computeFn,
+    equalityFn,
+    () => cache,
+    stateDependency,
+    arraySelector,
+    propName,
+    name
+  )
 }
