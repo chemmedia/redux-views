@@ -108,10 +108,8 @@ interface ArraySelectorCreator {
     T,
     S extends ReadonlyArray<Selector<any, any>>,
     Args extends ExtractSelectorsResult<S>,
-    SS extends Selector<any, any>,
     AS extends ParametricSelector<any, any, any>
     >(
-    stateSelector: SS,
     selectors: [...S],
     combiner: (...results: Args) => T,
     arraySelector: AS,
@@ -128,10 +126,8 @@ interface ArraySelectorCreator {
     T,
     S extends ReadonlyArray<ParametricSelector<any, any, any>>,
     Args extends ExtractSelectorsResult<S>,
-    SS extends Selector<any, any>,
     AS extends ParametricSelector<any, any, any>
     >(
-    stateSelector: SS,
     selectors: [...S],
     combiner: (...results: Args) => T,
     arraySelector: AS,

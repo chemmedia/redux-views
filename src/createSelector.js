@@ -48,7 +48,6 @@ const getComputeFn = (
   computeFn,
   equalityFn,
   getCache,
-  stateDependency,
   arraySelector,
   propName,
   name
@@ -62,7 +61,7 @@ const getComputeFn = (
     // console.log(`%c get dependencies from: ${name}`, 'color: lightgray;')
     const computedArgs = dependencies.map(fn => fn(...args))
     if (prevArgs && computedArgs.every((val, idx) => val === prevArgs[idx])) {
-      if (!arraySelector || !stateDependency || !propName) {
+      if (!arraySelector || !propName) {
         console.log(`%c reuse selector: ${name}`, 'color: orange;')
         return prevRes
       }
@@ -72,7 +71,7 @@ const getComputeFn = (
           `%c call array selector with ${propName}: ${prop}`,
           'color: green;'
         )
-        return arraySelector(stateDependency(...args), { [propName]: prop })
+        return arraySelector(args[0], { [propName]: prop })
       })
     }
     nComputations++
@@ -82,7 +81,7 @@ const getComputeFn = (
     const newRes = (cache[1] =
       equalityFn && equalityFn(res, prevRes) ? prevRes : res)
 
-    if (!arraySelector || !stateDependency || !propName) {
+    if (!arraySelector || !propName) {
       return newRes
     }
 
@@ -91,7 +90,7 @@ const getComputeFn = (
         `%c call array selector with ${propName}: ${prop}`,
         'color: green;'
       )
-      return arraySelector(stateDependency(...args), { [propName]: prop })
+      return arraySelector(args[0], { [propName]: prop })
     })
   }
 
@@ -107,7 +106,6 @@ const getInstanceSelector = (
   computeFn,
   equalityFn,
   idSelector,
-  stateDependency,
   arraySelector,
   propName,
   name
@@ -123,7 +121,6 @@ const getInstanceSelector = (
       const id = idSelector(...args)
       return cache[id] || (cache[id] = new Array(2))
     },
-    stateDependency,
     arraySelector,
     propName,
     name
@@ -191,7 +188,6 @@ export const createSelector = (dependencies, computeFn, equalityFn, name) => {
       idSelector,
       undefined,
       undefined,
-      undefined,
       name
     )
   }
@@ -203,13 +199,11 @@ export const createSelector = (dependencies, computeFn, equalityFn, name) => {
     () => cache,
     undefined,
     undefined,
-    undefined,
     name
   )
 }
 
 export const createArraySelector = (
-  stateDependency,
   dependencies,
   computeFn,
   arraySelector,
@@ -220,17 +214,16 @@ export const createArraySelector = (
   if (
     process.env.NODE_ENV !== 'production' &&
     !dependencies
-      .concat(computeFn, stateDependency, arraySelector)
+      .concat(computeFn, arraySelector)
       .every(dep => typeof dep === 'function')
   ) {
     const dependencyTypes = dependencies.map(dep => typeof dep).join(', ')
     const computeFnType = typeof computeFn
-    const stateDependencyFnType = typeof stateDependency
     const arraySelectorFnType = typeof arraySelector
     throw new Error(
       'Selector creators expect all input-selectors to be functions, ' +
         `instead received the following types:\n - dependencies: [${dependencyTypes}]\n` +
-        `computeFn: ${computeFnType}\n stateDependencyFn: ${stateDependencyFnType}\n arraySelectorFn: ${arraySelectorFnType}`
+        `computeFn: ${computeFnType}\n arraySelectorFn: ${arraySelectorFnType}`
     )
   }
 
@@ -241,7 +234,6 @@ export const createArraySelector = (
       computeFn,
       equalityFn,
       idSelector,
-      stateDependency,
       arraySelector,
       propName,
       name
@@ -253,7 +245,6 @@ export const createArraySelector = (
     computeFn,
     equalityFn,
     () => cache,
-    stateDependency,
     arraySelector,
     propName,
     name
