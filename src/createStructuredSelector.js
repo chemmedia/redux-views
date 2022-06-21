@@ -1,4 +1,4 @@
-import createSelector from './createSelector'
+import { createSelector } from './createSelector'
 
 export default selectors => {
   if (process.env.NODE_ENV !== 'production' && typeof selectors !== 'object') {

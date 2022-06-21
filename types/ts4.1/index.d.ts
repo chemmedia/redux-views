@@ -78,7 +78,8 @@ interface SelectorCreator {
   >(
     selectors: [...S],
     combiner: (...results: Args) => T,
-    equalityFn?: EqualityFn<T>
+    equalityFn?: EqualityFn<T>,
+    name?: string
   ): OutputSelector<
     MergeTypes<ExtractSelectorsInput<S>>,
     T,
@@ -92,7 +93,8 @@ interface SelectorCreator {
   >(
     selectors: [...S],
     combiner: (...results: Args) => T,
-    equalityFn?: EqualityFn<T>
+    equalityFn?: EqualityFn<T>,
+    name?: string
   ): OutputParametricSelector<
     MergeTypes<ExtractSelectorsInput<S>>,
     MergeTypes<ExtractSelectorsProps<S>>,
@@ -101,9 +103,54 @@ interface SelectorCreator {
   >
 }
 
+interface ArraySelectorCreator {
+  <
+    T,
+    S extends ReadonlyArray<Selector<any, any>>,
+    Args extends ExtractSelectorsResult<S>,
+    SS extends Selector<any, any>,
+    AS extends ParametricSelector<any, any, any>
+    >(
+    stateSelector: SS,
+    selectors: [...S],
+    combiner: (...results: Args) => T,
+    arraySelector: AS,
+    propName: string,
+    equalityFn?: EqualityFn<T>,
+    name?: string
+  ): OutputSelector<
+    MergeTypes<ExtractSelectorsInput<S>>,
+    T,
+    (...results: Args) => T
+    >
+
+  <
+    T,
+    S extends ReadonlyArray<ParametricSelector<any, any, any>>,
+    Args extends ExtractSelectorsResult<S>,
+    SS extends Selector<any, any>,
+    AS extends ParametricSelector<any, any, any>
+    >(
+    stateSelector: SS,
+    selectors: [...S],
+    combiner: (...results: Args) => T,
+    arraySelector: AS,
+    propName: string,
+    equalityFn?: EqualityFn<T>,
+    name?: string
+  ): OutputParametricSelector<
+    MergeTypes<ExtractSelectorsInput<S>>,
+    MergeTypes<ExtractSelectorsProps<S>>,
+    T,
+    (...results: Args) => T
+    >
+}
+
 export {}
 
 export const createSelector: SelectorCreator
+
+export const createArraySelector: ArraySelectorCreator
 
 ////////////////////////////////
 /// createStructuredSelector ///
