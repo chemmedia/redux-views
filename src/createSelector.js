@@ -43,6 +43,13 @@ const getIdSelector = dependencies => {
     : getCombinedIdSelector(uniqIdSelectors)
 }
 
+const getDependencies = (dependencies) => dependencies ? dependencies
+  .map(dependency => dependency.dependencies ? getDependencies(dependency.dependencies) : [dependency])
+  .reduce((total, current) => {
+    const x = current.filter(c => !total.includes(c) && !c.idSelector);
+    return [...total, ...x];
+  }, []) : [];
+
 const getComputeFn = (
   dependencies_,
   computeFn,
@@ -50,7 +57,8 @@ const getComputeFn = (
   getCache,
   arraySelector,
   propName,
-  name
+  name,
+  compilationDependencies
 ) => {
   const dependencies = dependencies_.length > 0 ? dependencies_ : ofIdentity
   let nComputations = 0
@@ -59,24 +67,33 @@ const getComputeFn = (
     const cache = getCache(...args)
     const [prevArgs, prevRes] = cache
     // console.log(`%c get dependencies from: ${name}`, 'color: lightgray;')
-    const computedArgs = dependencies.map(fn => fn(...args))
+
+
+    // if (compilationDependencies) {
+    //   console.log(compilationDependencies, getDependencies(compilationDependencies));
+    // }
+
+    const computedArgs = [...dependencies, ...getDependencies(compilationDependencies)].map(fn => fn(...args))
     if (prevArgs && computedArgs.every((val, idx) => val === prevArgs[idx])) {
       if (!arraySelector || !propName) {
-        console.log(`%c reuse selector: ${name}`, 'color: orange;')
+        // console.log(`%c reuse selector: ${name}`, 'color: orange;')
         return prevRes
       }
 
       return prevRes.map(prop => {
-        console.log(
-          `%c call array selector with ${propName}: ${prop}`,
-          'color: green;'
-        )
+        // console.log(
+        //   `%c call array selector with ${propName}: ${prop}`,
+        //   'color: green;'
+        // )
         return arraySelector(args[0], { [propName]: prop })
       })
     }
     nComputations++
-    console.log(`%c selector: ${name}`, nComputations, computedArgs)
-    const res = computeFn(...computedArgs)
+    // console.log(`%c selector: ${name}`, nComputations, computedArgs)
+
+    const selectorArgs = compilationDependencies ? [args[0], ...computedArgs] : computedArgs;
+
+    const res = computeFn(...selectorArgs)
     cache[0] = computedArgs
     const newRes = (cache[1] =
       equalityFn && equalityFn(res, prevRes) ? prevRes : res)
@@ -86,10 +103,10 @@ const getComputeFn = (
     }
 
     return newRes.map(prop => {
-      console.log(
-        `%c call array selector with ${propName}: ${prop}`,
-        'color: green;'
-      )
+      // console.log(
+      //   `%c call array selector with ${propName}: ${prop}`,
+      //   'color: green;'
+      // )
       return arraySelector(args[0], { [propName]: prop })
     })
   }
@@ -108,7 +125,8 @@ const getInstanceSelector = (
   idSelector,
   arraySelector,
   propName,
-  name
+  name,
+  compilationDependencies
 ) => {
   let cache = {}
   let usages = {}
@@ -123,7 +141,8 @@ const getInstanceSelector = (
     },
     arraySelector,
     propName,
-    name
+    name,
+    compilationDependencies
   )
 
   result.idSelector = idSelector
@@ -248,5 +267,43 @@ export const createArraySelector = (
     arraySelector,
     propName,
     name
+  )
+}
+
+export const createCompilationSelector = (dependencies, compilationDependencies, computeFn, equalityFn, name) => {
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    !dependencies.concat(computeFn).every(dep => typeof dep === 'function')
+  ) {
+    const dependencyTypes = dependencies.map(dep => typeof dep).join(', ')
+    const computeFnType = typeof computeFn
+    throw new Error(
+      'Selector creators expect all input-selectors to be functions, ' +
+      `instead received the following types:\n - dependencies: [${dependencyTypes}]\n computeFn: ${computeFnType}`
+    )
+  }
+  const idSelector = getIdSelector(dependencies)
+  if (idSelector) {
+    return getInstanceSelector(
+      dependencies,
+      computeFn,
+      equalityFn,
+      idSelector,
+      undefined,
+      undefined,
+      name,
+      compilationDependencies
+    )
+  }
+  const cache = new Array(2)
+  return getComputeFn(
+    dependencies,
+    computeFn,
+    equalityFn,
+    () => cache,
+    undefined,
+    undefined,
+    name,
+    compilationDependencies
   )
 }
