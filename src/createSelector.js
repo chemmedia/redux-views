@@ -43,12 +43,25 @@ const getIdSelector = dependencies => {
     : getCombinedIdSelector(uniqIdSelectors)
 }
 
+const depCache = new Map();
+
 const getDependencies = (dependencies) => {
+  console.count('getDependencies');
   if (!dependencies) {
     return [];
   }
+
   return dependencies
-    .map(dependency => dependency.dependencies ? getDependencies(dependency.dependencies) : [dependency])
+    .map(dependency => {
+      const cachedDependency = depCache.get(dependency);
+      if (cachedDependency) {
+        return cachedDependency;
+      }
+
+      const resultDependencies = dependency.dependencies ? getDependencies(dependency.dependencies) : [dependency];
+      depCache.set(dependency, resultDependencies);
+      return resultDependencies;
+    })
     .reduce((total, current) => {
       total.push(...current.filter(c => !c.idSelector && !total.includes(c)));
       return total;
