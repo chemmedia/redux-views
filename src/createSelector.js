@@ -58,7 +58,7 @@ const getComputeFn = (
   arraySelector,
   propName,
   name,
-  compilationDependencies
+  isCompilationSelector,
 ) => {
   const dependencies = dependencies_.length > 0 ? dependencies_ : ofIdentity
   let nComputations = 0
@@ -68,12 +68,7 @@ const getComputeFn = (
     const [prevArgs, prevRes] = cache
     // console.log(`%c get dependencies from: ${name}`, 'color: lightgray;')
 
-
-    // if (compilationDependencies) {
-    //   console.log(compilationDependencies, getDependencies(compilationDependencies));
-    // }
-
-    const computedArgs = [...dependencies, ...getDependencies(compilationDependencies)].map(fn => fn(...args))
+    const computedArgs = dependencies.map(fn => fn(...args))
     if (prevArgs && computedArgs.every((val, idx) => val === prevArgs[idx])) {
       if (!arraySelector || !propName) {
         // console.log(`%c reuse selector: ${name}`, 'color: orange;')
@@ -91,7 +86,7 @@ const getComputeFn = (
     nComputations++
     // console.log(`%c selector: ${name}`, nComputations, computedArgs)
 
-    const selectorArgs = compilationDependencies ? [args[0], ...computedArgs] : computedArgs;
+    const selectorArgs = isCompilationSelector ? [args[0], ...computedArgs] : computedArgs;
 
     const res = computeFn(...selectorArgs)
     cache[0] = computedArgs
@@ -126,7 +121,7 @@ const getInstanceSelector = (
   arraySelector,
   propName,
   name,
-  compilationDependencies
+  isCompilationSelector
 ) => {
   let cache = {}
   let usages = {}
@@ -142,7 +137,7 @@ const getInstanceSelector = (
     arraySelector,
     propName,
     name,
-    compilationDependencies
+    isCompilationSelector
   )
 
   result.idSelector = idSelector
@@ -270,18 +265,22 @@ export const createArraySelector = (
   )
 }
 
-export const createCompilationSelector = (dependencies, compilationDependencies, computeFn, equalityFn, name) => {
+export const createCompilationSelector = (_dependencies, compilationDependencies, computeFn, equalityFn, name) => {
   if (
     process.env.NODE_ENV !== 'production' &&
-    !dependencies.concat(computeFn).every(dep => typeof dep === 'function')
+    !_dependencies.concat(computeFn).every(dep => typeof dep === 'function')
   ) {
-    const dependencyTypes = dependencies.map(dep => typeof dep).join(', ')
+    const dependencyTypes = _dependencies.map(dep => typeof dep).join(', ')
     const computeFnType = typeof computeFn
     throw new Error(
       'Selector creators expect all input-selectors to be functions, ' +
       `instead received the following types:\n - dependencies: [${dependencyTypes}]\n computeFn: ${computeFnType}`
     )
   }
+
+
+  const dependencies = [..._dependencies, ...getDependencies(compilationDependencies)];
+
   const idSelector = getIdSelector(dependencies)
   if (idSelector) {
     return getInstanceSelector(
@@ -292,7 +291,7 @@ export const createCompilationSelector = (dependencies, compilationDependencies,
       undefined,
       undefined,
       name,
-      compilationDependencies
+      !!compilationDependencies
     )
   }
   const cache = new Array(2)
@@ -304,6 +303,6 @@ export const createCompilationSelector = (dependencies, compilationDependencies,
     undefined,
     undefined,
     name,
-    compilationDependencies
+    !!compilationDependencies
   )
 }
