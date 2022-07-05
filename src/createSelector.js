@@ -46,7 +46,6 @@ const getIdSelector = dependencies => {
 const depCache = new Map();
 
 const getDependencies = (dependencies) => {
-  console.count('getDependencies');
   if (!dependencies) {
     return [];
   }
