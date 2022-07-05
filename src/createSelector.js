@@ -43,12 +43,14 @@ const getIdSelector = dependencies => {
     : getCombinedIdSelector(uniqIdSelectors)
 }
 
-const getDependencies = (dependencies) => dependencies ? dependencies
-  .map(dependency => dependency.dependencies ? getDependencies(dependency.dependencies) : [dependency])
-  .reduce((total, current) => {
-    const x = current.filter(c => !total.includes(c) && !c.idSelector);
-    return [...total, ...x];
-  }, []) : [];
+const getDependencies = (dependencies) => {
+  if (!dependencies) {
+    return [];
+  }
+  return dependencies
+    .map(dependency => dependency.dependencies ? getDependencies(dependency.dependencies) : [dependency])
+    .reduce((total, current) => total.concat(current.filter(c => !c.idSelector && !total.includes(c))), []);
+};
 
 const getComputeFn = (
   dependencies_,
@@ -68,8 +70,12 @@ const getComputeFn = (
       return prevRes
     }
     nComputations++
-    const selectorArgs = isCompilationSelector ? [args[0], ...computedArgs] : computedArgs;
-    const res = computeFn(...selectorArgs)
+
+    if (isCompilationSelector) {
+      computedArgs.unshift(args[0])
+    }
+
+    const res = computeFn(...computedArgs)
     cache[0] = computedArgs
     return (cache[1] = equalityFn && equalityFn(res, prevRes) ? prevRes : res)
   }
