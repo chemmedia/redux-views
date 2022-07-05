@@ -2011,7 +2011,7 @@ interface CompilationSelectorCreator {
     >
 
   /* eight selectors */
-  <S1, S2, S3, S4, S5, S6, S7, S8, R1, R2, R3, R4, R5, R6, R7, R8, T>(
+  <S1, S2, S3, S4, S5, S6, S7, S8, R1, R2, R3, R4, R5, R6, R7, R8, CS1, CP1, CR1, T>(
     selectors: [
       Selector<S1, R1>,
       Selector<S2, R2>,
@@ -2022,7 +2022,11 @@ interface CompilationSelectorCreator {
       Selector<S7, R7>,
       Selector<S8, R8>
     ],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+    ],
     combiner: (
+      state: S1,
       res1: R1,
       res2: R2,
       res3: R3,
@@ -2072,6 +2076,7 @@ interface CompilationSelectorCreator {
     R6,
     R7,
     R8,
+    CS1, CP1, CR1,
     T
     >(
     selectors: [
@@ -2084,7 +2089,11 @@ interface CompilationSelectorCreator {
       ParametricSelector<S7, P7, R7>,
       ParametricSelector<S8, P8, R8>
     ],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+    ],
     combiner: (
+      state: S1,
       res1: R1,
       res2: R2,
       res3: R3,
@@ -2093,7 +2102,7 @@ interface CompilationSelectorCreator {
       res6: R6,
       res7: R7,
       res8: R8
-    ) => T
+    ) => T,
   ): OutputParametricSelector<
     S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8,
     P1 & P2 & P3 & P4 & P5 & P6 & P7 & P8,
