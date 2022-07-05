@@ -86,11 +86,7 @@ const getComputeFn = (
     }
     nComputations++
 
-    if (isCompilationSelector) {
-      computedArgs.unshift(args[0])
-    }
-
-    const res = computeFn(...computedArgs)
+    const res = isCompilationSelector ? computeFn(args[0], ...computedArgs) : computeFn(...computedArgs)
     cache[0] = computedArgs
     return (cache[1] = equalityFn && equalityFn(res, prevRes) ? prevRes : res)
   }
