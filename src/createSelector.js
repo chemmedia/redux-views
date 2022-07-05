@@ -49,7 +49,10 @@ const getDependencies = (dependencies) => {
   }
   return dependencies
     .map(dependency => dependency.dependencies ? getDependencies(dependency.dependencies) : [dependency])
-    .reduce((total, current) => total.concat(current.filter(c => !c.idSelector && !total.includes(c))), []);
+    .reduce((total, current) => {
+      total.push(...current.filter(c => !c.idSelector && !total.includes(c)));
+      return total;
+    }, []);
 };
 
 const getComputeFn = (
