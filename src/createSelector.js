@@ -193,13 +193,14 @@ export const createSelector = (dependencies, computeFn, equalityFn) => {
 export const createCompilationSelector = (_dependencies, compilationDependencies, computeFn, equalityFn) => {
   if (
     process.env.NODE_ENV !== 'production' &&
-    !_dependencies.concat(computeFn).every(dep => typeof dep === 'function')
+    !_dependencies.concat(computeFn, ...compilationDependencies).every(dep => typeof dep === 'function')
   ) {
     const dependencyTypes = _dependencies.map(dep => typeof dep).join(', ')
+    const compilationDependencyTypes = compilationDependencies.map(dep => typeof dep).join(', ')
     const computeFnType = typeof computeFn
     throw new Error(
       'Selector creators expect all input-selectors to be functions, ' +
-      `instead received the following types:\n - dependencies: [${dependencyTypes}]\n computeFn: ${computeFnType}`
+      `instead received the following types:\n - dependencies: [${dependencyTypes}]\n - compilation depedencies: [${compilationDependencyTypes}]\n computeFn: ${computeFnType}`
     )
   }
 
