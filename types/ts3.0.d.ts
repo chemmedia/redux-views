@@ -1813,7 +1813,7 @@ interface CompilationSelectorCreator {
     equalityFn?: EqualityFn<T>
   ): OutputParametricSelector<S1 & S2, P1 & P2, T, (state: S1 & S2, res1: R1, res2: R2) => T>
 
-  /* three selectors */
+  /* three selectors, one compilation */
   <S1, S2, S3, R1, R2, R3, CS1, CP1, CR1, T>(
     selectors: [Selector<S1, R1>, Selector<S2, R2>, Selector<S3, R3>],
     compilationSelectors: [
@@ -1831,6 +1831,42 @@ interface CompilationSelectorCreator {
     ],
     compilationSelectors: [
       ParametricSelector<CS1, CP1, CR1>,
+    ],
+    combiner: (state: S1 & S2 & S3, res1: R1, res2: R2, res3: R3) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputParametricSelector<
+    S1 & S2 & S3,
+    P1 & P2 & P3,
+    T,
+    (state: S1 & S2 & S3, res1: R1, res2: R2, res3: R3) => T
+    >
+
+  /* three selectors, five compilation */
+  <S1, S2, S3, R1, R2, R3, CS1, CP1, CR1, CS2, CP2, CR2, CS3, CP3, CR3, CS4, CP4, CR4, CS5, CP5, CR5, T>(
+    selectors: [Selector<S1, R1>, Selector<S2, R2>, Selector<S3, R3>],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+      ParametricSelector<CS2, CP2, CR2>,
+      ParametricSelector<CS3, CP3, CR3>,
+      ParametricSelector<CS4, CP4, CR4>,
+      ParametricSelector<CS5, CP5, CR5>,
+    ],
+    combiner: (state: S1 & S2 & S3, res1: R1, res2: R2, res3: R3) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputSelector<S1 & S2 & S3, T, (state: S1 & S2 & S3, res1: R1, res2: R2, res3: R3) => T>
+
+  <S1, S2, S3, P1, P2, P3, R1, R2, R3, CS1, CP1, CR1, CS2, CP2, CR2, CS3, CP3, CR3, CS4, CP4, CR4, CS5, CP5, CR5, T>(
+    selectors: [
+      ParametricSelector<S1, P1, R1>,
+      ParametricSelector<S2, P2, R2>,
+      ParametricSelector<S3, P3, R3>
+    ],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+      ParametricSelector<CS2, CP2, CR2>,
+      ParametricSelector<CS3, CP3, CR3>,
+      ParametricSelector<CS4, CP4, CR4>,
+      ParametricSelector<CS5, CP5, CR5>,
     ],
     combiner: (state: S1 & S2 & S3, res1: R1, res2: R2, res3: R3) => T,
     equalityFn?: EqualityFn<T>
