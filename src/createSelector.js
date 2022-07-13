@@ -43,36 +43,38 @@ const getIdSelector = dependencies => {
     : getCombinedIdSelector(uniqIdSelectors)
 }
 
-const depCache = new Map();
+const depCache = new Map()
 
-const getDependencies = (dependencies) => {
+const getDependencies = dependencies => {
   if (!dependencies) {
-    return [];
+    return []
   }
 
   return dependencies
     .map(dependency => {
-      const cachedDependency = depCache.get(dependency);
+      const cachedDependency = depCache.get(dependency)
       if (cachedDependency) {
-        return cachedDependency;
+        return cachedDependency
       }
 
-      const resultDependencies = dependency.dependencies ? getDependencies(dependency.dependencies) : [dependency];
-      depCache.set(dependency, resultDependencies);
-      return resultDependencies;
+      const resultDependencies = dependency.dependencies
+        ? getDependencies(dependency.dependencies)
+        : [dependency]
+      depCache.set(dependency, resultDependencies)
+      return resultDependencies
     })
     .reduce((total, current) => {
-      total.push(...current.filter(c => !c.idSelector && !total.includes(c)));
-      return total;
-    }, []);
-};
+      total.push(...current.filter(c => !c.idSelector && !total.includes(c)))
+      return total
+    }, [])
+}
 
 const getComputeFn = (
   dependencies_,
   computeFn,
   equalityFn,
   getCache,
-  isCompilationSelector,
+  isCompilationSelector
 ) => {
   const dependencies = dependencies_.length > 0 ? dependencies_ : ofIdentity
   let nComputations = 0
@@ -86,7 +88,9 @@ const getComputeFn = (
     }
     nComputations++
 
-    const res = isCompilationSelector ? computeFn(args[0], ...computedArgs) : computeFn(...computedArgs)
+    const res = isCompilationSelector
+      ? computeFn(args[0], ...computedArgs)
+      : computeFn(...computedArgs)
     cache[0] = computedArgs
     return (cache[1] = equalityFn && equalityFn(res, prevRes) ? prevRes : res)
   }
@@ -174,38 +178,39 @@ export const createSelector = (dependencies, computeFn, equalityFn) => {
   }
   const idSelector = getIdSelector(dependencies)
   if (idSelector) {
-    return getInstanceSelector(
-      dependencies,
-      computeFn,
-      equalityFn,
-      idSelector,
-    )
+    return getInstanceSelector(dependencies, computeFn, equalityFn, idSelector)
   }
   const cache = new Array(2)
-  return getComputeFn(
-    dependencies,
-    computeFn,
-    equalityFn,
-    () => cache,
-  )
+  return getComputeFn(dependencies, computeFn, equalityFn, () => cache)
 }
 
-export const createCompilationSelector = (_dependencies, compilationDependencies, computeFn, equalityFn) => {
+export const createCompilationSelector = (
+  _dependencies,
+  compilationDependencies,
+  computeFn,
+  equalityFn
+) => {
   if (
     process.env.NODE_ENV !== 'production' &&
-    !_dependencies.concat(computeFn, ...compilationDependencies).every(dep => typeof dep === 'function')
+    !_dependencies
+      .concat(computeFn, ...compilationDependencies)
+      .every(dep => typeof dep === 'function')
   ) {
     const dependencyTypes = _dependencies.map(dep => typeof dep).join(', ')
-    const compilationDependencyTypes = compilationDependencies.map(dep => typeof dep).join(', ')
+    const compilationDependencyTypes = compilationDependencies
+      .map(dep => typeof dep)
+      .join(', ')
     const computeFnType = typeof computeFn
     throw new Error(
       'Selector creators expect all input-selectors to be functions, ' +
-      `instead received the following types:\n - dependencies: [${dependencyTypes}]\n - compilation depedencies: [${compilationDependencyTypes}]\n computeFn: ${computeFnType}`
+        `instead received the following types:\n - dependencies: [${dependencyTypes}]\n - compilation depedencies: [${compilationDependencyTypes}]\n computeFn: ${computeFnType}`
     )
   }
 
-
-  const dependencies = [..._dependencies, ...getDependencies(compilationDependencies)];
+  const dependencies = [
+    ..._dependencies,
+    ...getDependencies(compilationDependencies)
+  ]
 
   const idSelector = getIdSelector(dependencies)
   if (idSelector) {

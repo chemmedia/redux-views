@@ -41,7 +41,7 @@
     "test:cov": "npm test -- --coverage",
     "test:types": "dtslint types/ts4.1",
     "build": "cross-env NODE_ENV=production rollup -c",
-    "prepare": "npm run clean && npm run format:check && npm run lint && npm test && npm run build"
+    "prepare": "npm run clean && npm run format:check && npm run lint && npm test"
   },
   "dependencies": {
     "loose-envify": "^1.1.0"
