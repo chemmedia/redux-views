@@ -1794,7 +1794,7 @@ interface CompilationSelectorCreator {
     equalityFn?: EqualityFn<T>
   ): OutputParametricSelector<S1, P1, T, (state: S1, res1: R1) => T>
 
-  /* two selectors */
+  /* two selectors, one compilation */
   <S1, S2, R1, R2, CS1, CP1, CR1, T>(
     selectors: [Selector<S1, R1>, Selector<S2, R2>],
     compilationSelectors: [
@@ -1808,6 +1808,27 @@ interface CompilationSelectorCreator {
     selectors: [ParametricSelector<S1, P1, R1>, ParametricSelector<S2, P2, R2>],
     compilationSelectors: [
       ParametricSelector<CS1, CP1, CR1>,
+    ],
+    combiner: (state: S1 & S2, res1: R1, res2: R2) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputParametricSelector<S1 & S2, P1 & P2, T, (state: S1 & S2, res1: R1, res2: R2) => T>
+
+  /* two selectors, two compilation */
+  <S1, S2, R1, R2, CS1, CP1, CR1, CS2, CP2, CR2, T>(
+    selectors: [Selector<S1, R1>, Selector<S2, R2>],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+      ParametricSelector<CS2, CP2, CR2>,
+    ],
+    combiner: (state: S1 & S2, res1: R1, res2: R2) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputSelector<S1 & S2, T, (state: S1 & S2, res1: R1, res2: R2) => T>
+
+  <S1, S2, P1, P2, R1, R2, CS1, CP1, CR1, CS2, CP2, CR2, T>(
+    selectors: [ParametricSelector<S1, P1, R1>, ParametricSelector<S2, P2, R2>],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+      ParametricSelector<CS2, CP2, CR2>,
     ],
     combiner: (state: S1 & S2, res1: R1, res2: R2) => T,
     equalityFn?: EqualityFn<T>
