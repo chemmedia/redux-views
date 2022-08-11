@@ -2046,6 +2046,83 @@ interface CompilationSelectorCreator {
     (state: S1 & S2 & S3 & S4, res1: R1, res2: R2, res3: R3, res4: R4) => T
     >
 
+  /* four selectors, three compilation */
+  <S1, S2, S3, S4, R1, R2, R3, R4, CS1, CP1, CR1, CS2, CP2, CR2, CS3, CP3, CR3, T>(
+    selectors: [
+      Selector<S1, R1>,
+      Selector<S2, R2>,
+      Selector<S3, R3>,
+      Selector<S4, R4>,
+    ],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+      ParametricSelector<CS2, CP2, CR2>,
+      ParametricSelector<CS3, CP3, CR3>,
+    ],
+    combiner: (
+      state: S1 & S2 & S3 & S4,
+      res1: R1,
+      res2: R2,
+      res3: R3,
+      res4: R4,
+    ) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputSelector<
+    S1 & S2 & S3 & S4,
+    T,
+    (state: S1 & S2 & S3 & S4, res1: R1, res2: R2, res3: R3, res4: R4) => T
+    >
+
+  <
+    S1,
+    S2,
+    S3,
+    S4,
+    P1,
+    P2,
+    P3,
+    P4,
+    R1,
+    R2,
+    R3,
+    R4,
+    CS1,
+    CP1,
+    CR1,
+    CS2,
+    CP2,
+    CR2,
+    CS3,
+    CP3,
+    CR3,
+    T
+    >(
+    selectors: [
+      ParametricSelector<S1, P1, R1>,
+      ParametricSelector<S2, P2, R2>,
+      ParametricSelector<S3, P3, R3>,
+      ParametricSelector<S4, P4, R4>,
+    ],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+      ParametricSelector<CS2, CP2, CR2>,
+      ParametricSelector<CS3, CP3, CR3>,
+    ],
+    combiner: (
+      state: S1 & S2 & S3 & S4,
+      res1: R1,
+      res2: R2,
+      res3: R3,
+      res4: R4,
+    ) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputParametricSelector<
+    S1 & S2 & S3 & S4,
+    P1 & P2 & P3 & P4,
+    T,
+    (state: S1 & S2 & S3 & S4, res1: R1, res2: R2, res3: R3, res4: R4) => T
+    >
+
   /* five selectors */
   <S1, S2, S3, S4, S5, R1, R2, R3, R4, R5, CS1, CP1, CR1, T>(
     selectors: [
