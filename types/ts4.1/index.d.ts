@@ -116,3 +116,50 @@ export function createStructuredSelector<S, T>(
 export function createStructuredSelector<S, P, T>(
   selectors: { [K in keyof T]: ParametricSelector<S, P, T[K]> }
 ): OutputParametricSelector<S, P, T, never>
+
+/////////////////////////////////
+/// createCompilationSelector ///
+/////////////////////////////////
+
+interface CompilationSelectorCreator {
+  <
+    T,
+    S extends ReadonlyArray<Selector<any, any>>,
+    CS extends ReadonlyArray<ParametricSelector<any, any, any>>,
+    Args extends ExtractSelectorsResult<S>
+  >(
+    selectors: [...S],
+    compilationSelectors: [...CS],
+    combiner: (
+      state: MergeTypes<ExtractSelectorsInput<S>>,
+      ...results: Args
+    ) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputSelector<
+    MergeTypes<ExtractSelectorsInput<S>>,
+    T,
+    (...results: Args) => T
+  >
+
+  <
+    T,
+    S extends ReadonlyArray<ParametricSelector<any, any, any>>,
+    CS extends ReadonlyArray<ParametricSelector<any, any, any>>,
+    Args extends ExtractSelectorsResult<S>
+  >(
+    selectors: [...S],
+    compilationSelectors: [...CS],
+    combiner: (
+      state: MergeTypes<ExtractSelectorsInput<S>>,
+      ...results: Args
+    ) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputParametricSelector<
+    MergeTypes<ExtractSelectorsInput<S>>,
+    MergeTypes<ExtractSelectorsProps<S>>,
+    T,
+    (...results: Args) => T
+  >
+}
+
+export const createCompilationSelector: CompilationSelectorCreator
