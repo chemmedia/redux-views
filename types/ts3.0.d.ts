@@ -1811,6 +1811,29 @@ interface CompilationSelectorCreator {
     equalityFn?: EqualityFn<T>
   ): OutputParametricSelector<S1, P1, T, (state: S1, res1: R1) => T>
 
+  /* one selector, three compilation */
+  <S1, R1, CS1, CP1, CR1, CS2, CP2, CR2, CS3, CP3, CR3, T>(
+    selectors: [Selector<S1, R1>],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+      ParametricSelector<CS2, CP2, CR2>,
+      ParametricSelector<CS3, CP3, CR3>,
+    ],
+    combiner: (state: S1, res1: R1) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputSelector<S1, T, (state: S1, res1: R1) => T>
+
+  <S1, P1, R1, CS1, CP1, CR1, CS2, CP2, CR2, CS3, CP3, CR3, T>(
+    selectors: [ParametricSelector<S1, P1, R1>],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+      ParametricSelector<CS2, CP2, CR2>,
+      ParametricSelector<CS3, CP3, CR3>,
+    ],
+    combiner: (state: S1, res1: R1) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputParametricSelector<S1, P1, T, (state: S1, res1: R1) => T>
+
   /* one selector, eleven compilations */
   <
     S1,
@@ -2569,7 +2592,7 @@ interface CompilationSelectorCreator {
     (state: S1 & S2 & S3 & S4, res1: R1, res2: R2, res3: R3, res4: R4) => T
   >
 
-  /* five selectors */
+  /* five selectors, one compilation */
   <S1, S2, S3, S4, S5, R1, R2, R3, R4, R5, CS1, CP1, CR1, T>(
     selectors: [
       Selector<S1, R1>,
