@@ -3100,7 +3100,7 @@ interface CompilationSelectorCreator {
       ParametricSelector<CS2, CP2, CR2>
     ],
     combiner: (
-      state: S1 & S2 & S3 & S4 & S5 & S6 & S7,
+      state: S1 & S2 & S3 & S4 & S5 & S6,
       res1: R1,
       res2: R2,
       res3: R3,
