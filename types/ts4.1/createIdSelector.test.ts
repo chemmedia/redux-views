@@ -7,6 +7,6 @@ export const contactIdSelector = createIdSelector(
 )
 
 // $ExpectType ParametricSelector<{}, PropsB, string>
-export const companyIdSelector = createIdSelector<PropsB>(
+export const companyIdSelector = createIdSelector<{}, PropsB>(
   ({ companyId }) => companyId
 )

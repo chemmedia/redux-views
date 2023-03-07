@@ -25,9 +25,9 @@ interface IdSelector<P> {
   (props: P, ...args: any[]): string
 }
 
-export function createIdSelector<P>(
+export function createIdSelector<S, P>(
   idSelector: IdSelector<P>
-): ParametricSelector<{}, P, string>
+): ParametricSelector<S, P, string>
 
 //////////////////////
 /// createSelector ///
