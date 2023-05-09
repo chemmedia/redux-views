@@ -3281,6 +3281,117 @@ interface CompilationSelectorCreator {
     ) => T
   >
 
+  /* five selectors, two compilation */
+  <
+    S1,
+    S2,
+    S3,
+    S4,
+    S5,
+    R1,
+    R2,
+    R3,
+    R4,
+    R5,
+    CS1,
+    CP1,
+    CR1,
+    CS2,
+    CP2,
+    CR2,
+    T
+  >(
+    selectors: [
+      Selector<S1, R1>,
+      Selector<S2, R2>,
+      Selector<S3, R3>,
+      Selector<S4, R4>,
+      Selector<S5, R5>,
+    ],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+      ParametricSelector<CS2, CP2, CR2>
+    ],
+    combiner: (
+      state: S1 & S2 & S3 & S4 & S5,
+      res1: R1,
+      res2: R2,
+      res3: R3,
+      res4: R4,
+      res5: R5
+    ) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputSelector<
+    S1 & S2 & S3 & S4 & S5,
+    T,
+    (
+      state: S1 & S2 & S3 & S4 & S5,
+      res1: R1,
+      res2: R2,
+      res3: R3,
+      res4: R4,
+      res5: R5
+    ) => T
+  >
+
+  <
+    S1,
+    S2,
+    S3,
+    S4,
+    S5,
+    P1,
+    P2,
+    P3,
+    P4,
+    P5,
+    R1,
+    R2,
+    R3,
+    R4,
+    R5,
+    CS1,
+    CP1,
+    CR1,
+    CS2,
+    CP2,
+    CR2,
+    T
+  >(
+    selectors: [
+      ParametricSelector<S1, P1, R1>,
+      ParametricSelector<S2, P2, R2>,
+      ParametricSelector<S3, P3, R3>,
+      ParametricSelector<S4, P4, R4>,
+      ParametricSelector<S5, P5, R5>,
+    ],
+    compilationSelectors: [
+      ParametricSelector<CS1, CP1, CR1>,
+      ParametricSelector<CS2, CP2, CR2>
+    ],
+    combiner: (
+      state: S1 & S2 & S3 & S4 & S5,
+      res1: R1,
+      res2: R2,
+      res3: R3,
+      res4: R4,
+      res5: R5
+    ) => T,
+    equalityFn?: EqualityFn<T>
+  ): OutputParametricSelector<
+    S1 & S2 & S3 & S4 & S5,
+    P1 & P2 & P3 & P4 & P5,
+    T,
+    (
+      state: S1 & S2 & S3 & S4 & S5,
+      res1: R1,
+      res2: R2,
+      res3: R3,
+      res4: R4,
+      res5: R5
+    ) => T
+  >
+
   /* six selectors, one compilation */
   <S1, S2, S3, S4, S5, S6, R1, R2, R3, R4, R5, R6, CS1, CP1, CR1, T>(
     selectors: [
