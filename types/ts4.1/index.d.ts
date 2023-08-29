@@ -158,7 +158,7 @@ interface CompilationSelectorCreator {
     MergeTypes<ExtractSelectorsInput<S>>,
     MergeTypes<ExtractSelectorsProps<S>>,
     T,
-    (...results: Args) => T
+    (state: MergeTypes<ExtractSelectorsInput<S>>, ...results: Args) => T
   >
 }
 
